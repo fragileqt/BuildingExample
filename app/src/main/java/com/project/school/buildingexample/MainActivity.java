@@ -36,8 +36,10 @@ public class MainActivity extends ARActivity implements ARArbiTrackListener {
     public void setup()
     {
         super.setup();
+        Log.e("Setuping","Setuping");
         ARImageTrackable trackable = new ARImageTrackable("StarWars");
         trackable.loadFromAsset("target.png");
+
 
 // Get instance of image tracker manager
         ARImageTracker trackableManager = ARImageTracker.getInstance();
@@ -49,7 +51,7 @@ public class MainActivity extends ARActivity implements ARArbiTrackListener {
         ARModelImporter modelImporter = new ARModelImporter();
         modelImporter.loadFromAsset("ben.jet");
         ARModelNode modelNode = (ARModelNode)modelImporter.getNode();
-        modelNode.rotateByDegrees(-90,0,0,1);
+        //modelNode.rotateByDegrees(-90,0,0,1);
         modelNode.scaleByUniform(0.3f);
         modelNode.setName("BigBen");
 
@@ -67,21 +69,43 @@ public class MainActivity extends ARActivity implements ARArbiTrackListener {
             meshNode.setMaterial(material);
         }
 
+        ARModelImporter heartImporter = new ARModelImporter();
+        heartImporter.loadFromAsset("Heart.jet");
+        ARModelNode heartNode = (ARModelNode)heartImporter.getNode();
+        //modelNode.rotateByDegrees(-90,0,0,1);
+        heartNode.setName("Heart");
+        heartNode.setPosition(1500,5000,500);
+
+// Load model texture
+
+// Apply texture material to models mesh nodes
+        for (ARMeshNode meshNode : heartImporter.getMeshNodes()){
+            meshNode.setMaterial(material);
+        }
+
         // Initialise the image node with our image
-        ARImageNode imageNode = new ARImageNode("hearth.png");
+        ARImageNode imageNode = new ARImageNode("heart.png");
         imageNode.setName("Cow");
-        imageNode.setPosition(1500,0,500);
+        imageNode.setPosition(1500,5000,1500);
+        imageNode.scaleByUniform(2.0f);
+
+        ARImageNode imageNode12 = new ARImageNode("heart.png");
+        imageNode12.setPosition(-1200,3500,1500);
+        imageNode12.scaleByUniform(2.0f);
 
 // Add the image node as a child of the trackable's world
 // Add model node to image trackable
         trackable.getWorld().addChild(modelNode);
+        //trackable.getWorld().addChild(heartNode);
         modelNode.addChild(imageNode);
+        modelNode.addChild(imageNode12);
 
         // Initialise ArbiTrack
         ARArbiTrack arbiTrack = ARArbiTrack.getInstance();
+        ARGyroPlaceManager gyroPlaceManager = ARGyroPlaceManager.getInstance();
+        gyroPlaceManager.initialise();
 //Add the activity as an ArbiTrack delegate
         arbiTrack.initialise();
-
         arbiTrack.addListener(this);
         arbiTrack.setTargetNode(trackable.getWorld());
         trackable.addListener(new ARImageTrackableListener() {
@@ -110,21 +134,21 @@ public class MainActivity extends ARActivity implements ARArbiTrackListener {
             {
                 ARImageTrackable legoTrackable = ARImageTracker.getInstance().findTrackable("StarWars");
 
-
                 ARArbiTrack arbiTrack = ARArbiTrack.getInstance();
 
 
                 ARModelNode benNode = (ARModelNode) legoTrackable.getWorld().findChildByName("BigBen");
+               // ARModelNode heartNode = (ARModelNode) legoTrackable.getWorld().findChildByName("Heart");
 
 
-                Quaternion benFullOrientation = benNode.getWorld().getWorldOrientation().mult(benNode.getWorldOrientation());
-                benNode.setOrientation(arbiTrack.getWorld().getOrientation().inverse().mult(benFullOrientation));
-
-
+                benNode.setOrientation(1,1,1,1);
+                benNode.rotateByDegrees(180f,0,0,1);
 
                 benNode.remove();
+               // heartNode.remove();
 
                 arbiTrack.getWorld().addChild(benNode);
+               // arbiTrack.getWorld().addChild(heartNode);
 
                 firstRun = false;
             }
