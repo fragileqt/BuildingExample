@@ -1,10 +1,18 @@
 package com.project.school.buildingexample;
 
 import android.os.Bundle;
+import android.util.Log;
+
+import com.jme3.math.Quaternion;
 
 import eu.kudan.kudan.ARAPIKey;
 import eu.kudan.kudan.ARActivity;
+import eu.kudan.kudan.ARArbiTrack;
+import eu.kudan.kudan.ARArbiTrackListener;
+import eu.kudan.kudan.ARGyroPlaceManager;
+import eu.kudan.kudan.ARImageNode;
 import eu.kudan.kudan.ARImageTrackable;
+import eu.kudan.kudan.ARImageTrackableListener;
 import eu.kudan.kudan.ARImageTracker;
 import eu.kudan.kudan.ARLightMaterial;
 import eu.kudan.kudan.ARMeshNode;
@@ -12,8 +20,9 @@ import eu.kudan.kudan.ARModelImporter;
 import eu.kudan.kudan.ARModelNode;
 import eu.kudan.kudan.ARTexture2D;
 
-public class MainActivity extends ARActivity {
+public class MainActivity extends ARActivity implements ARArbiTrackListener {
 
+    boolean firstRun = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +49,9 @@ public class MainActivity extends ARActivity {
         ARModelImporter modelImporter = new ARModelImporter();
         modelImporter.loadFromAsset("ben.jet");
         ARModelNode modelNode = (ARModelNode)modelImporter.getNode();
-        modelNode.rotateByDegrees(90,1,0,0);
+        modelNode.rotateByDegrees(-90,0,0,1);
         modelNode.scaleByUniform(0.3f);
+        modelNode.setName("BigBen");
 
 // Load model texture
         ARTexture2D texture2D = new ARTexture2D();
@@ -57,7 +67,66 @@ public class MainActivity extends ARActivity {
             meshNode.setMaterial(material);
         }
 
+        // Initialise the image node with our image
+        ARImageNode imageNode = new ARImageNode("hearth.png");
+        imageNode.setName("Cow");
+        imageNode.setPosition(1500,0,500);
+
+// Add the image node as a child of the trackable's world
 // Add model node to image trackable
         trackable.getWorld().addChild(modelNode);
+        modelNode.addChild(imageNode);
+
+        // Initialise ArbiTrack
+        ARArbiTrack arbiTrack = ARArbiTrack.getInstance();
+//Add the activity as an ArbiTrack delegate
+        arbiTrack.initialise();
+
+        arbiTrack.addListener(this);
+        arbiTrack.setTargetNode(trackable.getWorld());
+        trackable.addListener(new ARImageTrackableListener() {
+            @Override
+            public void didDetect(ARImageTrackable arImageTrackable) {
+                ARArbiTrack arbiTrack = ARArbiTrack.getInstance();
+                arbiTrack.start();
+            }
+
+            @Override
+            public void didTrack(ARImageTrackable arImageTrackable) {
+
+            }
+
+            @Override
+            public void didLose(ARImageTrackable arImageTrackable) {
+
+            }
+        });
+    }
+
+    @Override
+    public void arbiTrackStarted() {
+            Log.e("Arbi","Arbitrack Started");
+            if (firstRun)
+            {
+                ARImageTrackable legoTrackable = ARImageTracker.getInstance().findTrackable("StarWars");
+
+
+                ARArbiTrack arbiTrack = ARArbiTrack.getInstance();
+
+
+                ARModelNode benNode = (ARModelNode) legoTrackable.getWorld().findChildByName("BigBen");
+
+
+                Quaternion benFullOrientation = benNode.getWorld().getWorldOrientation().mult(benNode.getWorldOrientation());
+                benNode.setOrientation(arbiTrack.getWorld().getOrientation().inverse().mult(benFullOrientation));
+
+
+
+                benNode.remove();
+
+                arbiTrack.getWorld().addChild(benNode);
+
+                firstRun = false;
+            }
     }
 }

@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BuildingExample.iml" filepath="$PROJECT_DIR$/BuildingExample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/BuildingExample.iml" filepath="$PROJECT_DIR$/.idea/BuildingExample.iml" />
+      <module fileurl="file://C:\GitHub\BuildingExample\BuildingExample.iml" filepath="C:\GitHub\BuildingExample\BuildingExample.iml" />
       <module fileurl="file://$PROJECT_DIR$/KudanAR/KudanAR.iml" filepath="$PROJECT_DIR$/KudanAR/KudanAR.iml" />
+      <module fileurl="file://C:\GitHub\BuildingExample\KudanAR\KudanAR.iml" filepath="C:\GitHub\BuildingExample\KudanAR\KudanAR.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\GitHub\BuildingExample\app\app.iml" filepath="C:\GitHub\BuildingExample\app\app.iml" />
     </modules>
   </component>
 </project>
