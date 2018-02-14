@@ -8,7 +8,12 @@ import eu.kudan.kudan.*
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
+/*
+TODO
+    Zistit ako funguje GPS tracker v kudane, hlavne ako presne a či vôbec
 
+
+ */
 class MainActivity : ARActivity(), ARArbiTrackListener {
 
     private val intervalObservable = Observable.interval(6, TimeUnit.MILLISECONDS)
